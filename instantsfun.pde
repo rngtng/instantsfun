@@ -1,5 +1,6 @@
 import org.mozilla.browser.MozillaWindow;
 import com.rngtng.launchpad.*;
+import java.awt.*;
 
 Launchpad launchpad;
 MozillaPanel moz;
@@ -14,8 +15,8 @@ void setup() {
   moz = new MozillaPanel(MozillaWindow.VisibilityMode.FORCED_HIDDEN, MozillaWindow.VisibilityMode.FORCED_HIDDEN);
   setLayout(new GridLayout(1,0));
   add(moz);
-  //moz.load("http://instantsfun.es");
-  MozillaAutomation.blockingLoad(moz, "http://instantsfun.es");
+  moz.load("http://instantsfun.es");
+  //MozillaAutomation.blockingLoad(moz, "http://instantsfun.es");
   MozillaAutomation.executeJavascript(moz, "window.scrollTo(0, 220);");
   
   // moz.addMouseListener(new MouseListener() {
@@ -53,7 +54,7 @@ void draw() {
 }
 
 void launchpadGridPressed(int _x, int _y) {
-  launchpad.changeGrid(x, y, LColor.RED_HIGH);
+  launchpad.changeGrid(_x, _y, LColor.RED_HIGH);
   x = _x;
   y = _y;
   exec();
@@ -65,19 +66,19 @@ public void launchpadGridReleased(int x, int y) {
 
 void keyPressed() {
   if(!y_set) {
-      y = int(key) - 48;
+      y = int(key) - 49;
       y_set = true;
   }
   else {
-      x = int(key) - 48;
+      x = int(key) - 49;
       exec();
   }
 }
 
 
 void exec() {
-    int pos = 8 * (y - 1) + (x - 1);
+    int pos = 8 * y + x;
     MozillaAutomation.executeJavascript(moz, "document.embeds["+pos+"].GotoFrame(1)");
-    println("Exec: " + x + "  " + y);
+    //println("Exec: " + x + "  " + y);
     y_set = false;
 }
