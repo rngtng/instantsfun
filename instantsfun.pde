@@ -4,31 +4,50 @@ import java.awt.*;
 
 Launchpad launchpad;
 MozillaPanel moz;
+Frame f;
 
 int first_coord = -1;
 
 void setup() {
-  launchpad = new Launchpad(this);
-  size(1040, 860);
-  moz = new MozillaPanel(MozillaWindow.VisibilityMode.FORCED_HIDDEN, MozillaWindow.VisibilityMode.FORCED_HIDDEN);
-  setLayout(new GridLayout(1,0));
-  add(moz);
-  load_instantsfun();
-}  
-  
+  load_splash_screen();
 
-void draw() {    
+  launchpad = new Launchpad(this);
+  
+  size(1040, 840);  
+  moz = new MozillaPanel(MozillaWindow.VisibilityMode.FORCED_HIDDEN, MozillaWindow.VisibilityMode.FORCED_HIDDEN);
+  add(moz);
+  setLayout(new GridLayout(1,0));
+
+  load_instantsfun();
+}
+
+
+void draw() {
 }
 
 /********************* W E B S I T E **************************/
 
+void load_splash_screen() {
+   Label lbl = new Label("\n\nLOADING...", Label.CENTER);
+   f = new Frame();
+   f.add(lbl);
+   f.setSize(300,100);
+   f.setUndecorated(true);
+   f.setLocation((screen.width/2)-100,(screen.height/2)-100);
+   f.setVisible(true);    
+}
+
 void load_instantsfun() {
+   moz.setVisible(false);
    int bsize = 65;
    String script = "for(i = 0; i < 64; i++){ document.embeds[i].width="+bsize+"; document.embeds[i].height="+(bsize-10)+"; };document.documentElement.style.overflow = 'hidden';window.scrollTo(20, 220);";
-   
+
    MozillaAutomation.blockingLoad(moz, "http://instantsfun.es");
-   println(script);
+   //moz.load("http://instantsfun.es");
    moz.load("javascript:"+script);
+   println("done");
+   f.setVisible(false);
+   moz.setVisible(true);
 }
 
 

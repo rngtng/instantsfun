@@ -2,9 +2,10 @@
 
 # require
 require 'rubygems'
-require 'net/github-upload'
+require 'net/github-upload' #sudo gem install net-github-upload
 
-DEBUG = true
+DEBUG = false
+UPLOAD = false
 
 # setup
 login = `git config github.user`.chomp  # your login for github
@@ -28,21 +29,26 @@ all_os.each do |os, human_os|
   # rename
   next unless exec "mv application.#{os} instantsfun"
 
+  #remove source
+  exec "rm -rf instantsfun/source"
+  
   if( os == :macosx )  #patch Mac Os X file to use java 1.6
-      #exec "mv instantsfun/instantsfun.app/Contents/Info.plist instantsfun/instantsfun.app/Contents/Info_old.plist"
-      #exec "sed 's/1\\\.5/1\\\.6/g' instantsfun/instantsfun.app/Contents/Info_old.plist > instantsfun/instantsfun.app/Contents/Info.plist"
+      exec "mv instantsfun/instantsfun.app/Contents/Info.plist instantsfun/instantsfun.app/Contents/Info_old.plist"
+      exec "sed 's/1\\\.5/1\\\.6/g' instantsfun/instantsfun.app/Contents/Info_old.plist > instantsfun/instantsfun.app/Contents/Info.plist"
       # copy icon
       exec "cp -f sketch.icns instantsfun/instantsfun.app/Contents/Resources/sketch.icns"
   end 
   
-  exec "cp -r native/* instantsfun/instantsfun.app/Contents/Resources/Java"
+  exec "cp -r mozswing_native/#{os}/* instantsfun/instantsfun.app/Contents/Resources/Java"
     
   #zip file
   exec "zip -x .DS_Store -r #{file} instantsfun/"
       
-  direct_link = DEBUG ? "debug" : gh.replace( :repos => repos, :file  => file, :description => "InstantsFun.Es Launchpad Wrapper#{human_os}")
+  if UPLOAD
+    direct_link =  gh.replace( :repos => repos, :file  => file, :description => "InstantsFun.Es Launchpad Wrapper #{human_os}")
+    exec "rm #{file}"
+  end
   
-  exec "rm #{file}"
   exec "rm -rf instantsfun"
   
   puts "########################  #{human_os} done, uploaded to: #{direct_link} ########################"  
