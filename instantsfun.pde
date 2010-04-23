@@ -9,19 +9,26 @@ int first_coord = -1;
 
 void setup() {
   launchpad = new Launchpad(this);
-  size(1070, 880);
+  size(1040, 860);
   moz = new MozillaPanel(MozillaWindow.VisibilityMode.FORCED_HIDDEN, MozillaWindow.VisibilityMode.FORCED_HIDDEN);
   setLayout(new GridLayout(1,0));
   add(moz);
-  //moz.load("http://instantsfun.es");
-  MozillaAutomation.blockingLoad(moz, "http://instantsfun.es");
-  int bsize = 60;
-  String script = "(for(i = 0; i < 64; i++) { document.embeds[i].width="+bsize+"; document.embeds[i].height="+bsize+"; };window.scrollTo(10, 220);)";
-  println(script);
-  MozillaAutomation.executeJavascript(moz, script);
-}
+  load_instantsfun();
+}  
+  
 
 void draw() {    
+}
+
+/********************* W E B S I T E **************************/
+
+void load_instantsfun() {
+   int bsize = 65;
+   String script = "for(i = 0; i < 64; i++){ document.embeds[i].width="+bsize+"; document.embeds[i].height="+(bsize-10)+"; };document.documentElement.style.overflow = 'hidden';window.scrollTo(20, 220);";
+   
+   MozillaAutomation.blockingLoad(moz, "http://instantsfun.es");
+   println(script);
+   moz.load("javascript:"+script);
 }
 
 

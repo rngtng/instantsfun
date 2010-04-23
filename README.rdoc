@@ -1,20 +1,22 @@
 = InstantsFun Standalone
-a simple (dirty) wrapper to fire the instantsfun.es sound with your Launchpad OR Keyboard easily
+a simple (dirty) wrapper to fire the instantsfun.es sounds with your Novation Launchpad OR Keyboard easily
 
 == Usage
-Have you ever visited http://instantsfun.es ? No? You should! It's full of must-have sound samples to cheer up you live! Too sad you only can fire those via mouse which suckz! But here come help.
+Have you ever visited http://instantsfun.es ? No? You should! It's full of must-have sound samples to cheer up you live! Too sad you only can fire those via mouse which suckz! But help arrived:
 
 Launch *InstantsFun Standalone* which fires the sound using your {Novation Launchpad}[http://www.novationmusic.com/products/launchpad?option=1]. Yay!
 
 == Technical Stuff
 Ok, I have to admit, this is a very quick dirty hack and could have be done way more elegant & efficient. But I didn't wanted to touch/modify/scrape the original website at all. So I came up with this simple wrapper. 
-t's basically a processing app which embeds a MozillaBrowser using {MozSwing}[http://sourceforge.net/projects/mozswing/] and connects to you Launchpad using my {Processing Launchpad Library}[http://rngtng.github.com/launchpad/]. On button pressed, a simple javascript command is send to the embedded browser to trigger the sound. That's it!
+
+It's basically a processing application which embeds a MozillaBrowser using {MozSwing}[http://sourceforge.net/projects/mozswing/] and connects to you Launchpad using my {Processing Launchpad Library}[http://rngtng.github.com/launchpad/]. On button pressed, a simple javascript command is send to the embedded browser to trigger the sound. That's it!
 
 
 == ToDo
 * optimize on file size
 * better keyboard support
 * better layout
+* quick startup / loading screen
 
 == Copyright
 The MIT License
