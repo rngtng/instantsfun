@@ -5,59 +5,31 @@ import java.awt.*;
 Launchpad launchpad;
 MozillaPanel moz;
 
-int x;
-int y;
-boolean y_set = false;
+int first_coord = -1;
 
 void setup() {
   launchpad = new Launchpad(this);
-  size(1050, 800);
+  size(1070, 880);
   moz = new MozillaPanel(MozillaWindow.VisibilityMode.FORCED_HIDDEN, MozillaWindow.VisibilityMode.FORCED_HIDDEN);
   setLayout(new GridLayout(1,0));
   add(moz);
-  moz.load("http://instantsfun.es");
-  //MozillaAutomation.blockingLoad(moz, "http://instantsfun.es");
-  MozillaAutomation.executeJavascript(moz, "window.scrollTo(0, 220);");
-  
-  // moz.addMouseListener(new MouseListener() {
-  //     public void mouseClicked(MouseEvent e) {
-  //         System.err.println("received "+e); //$NON-NLS-1$
-  //     }
-  //     public void mouseEntered(MouseEvent e) {
-  //         System.err.println("received "+e); //$NON-NLS-1$
-  //     }
-  //     public void mouseExited(MouseEvent e) {
-  //         System.err.println("received "+e); //$NON-NLS-1$
-  //     }
-  //     public void mousePressed(MouseEvent e) {
-  //         System.err.println("received "+e); //$NON-NLS-1$
-  //     }
-  //     public void mouseReleased(MouseEvent e) {
-  //         System.err.println("received "+e); //$NON-NLS-1$
-  //     }
-  // });
-  // 
-  // moz.addKeyListener(new KeyListener() {
-  //     public void keyPressed(KeyEvent e) {
-  //         System.err.println("received "+e); //$NON-NLS-1$
-  //     }
-  //     public void keyReleased(KeyEvent e) {
-  //         System.err.println("received "+e); //$NON-NLS-1$
-  //     }
-  //     public void keyTyped(KeyEvent e) {
-  //         System.err.println("received "+e); //$NON-NLS-1$
-  //     }
-  // });  
+  //moz.load("http://instantsfun.es");
+  MozillaAutomation.blockingLoad(moz, "http://instantsfun.es");
+  int bsize = 60;
+  String script = "(for(i = 0; i < 64; i++) { document.embeds[i].width="+bsize+"; document.embeds[i].height="+bsize+"; };window.scrollTo(10, 220);)";
+  println(script);
+  MozillaAutomation.executeJavascript(moz, script);
 }
 
 void draw() {    
 }
 
-void launchpadGridPressed(int _x, int _y) {
-  launchpad.changeGrid(_x, _y, LColor.RED_HIGH);
-  x = _x;
-  y = _y;
-  exec();
+
+/********************* E V E N T S ****************************/
+
+void launchpadGridPressed(int x, int y) {
+  launchpad.changeGrid(x, y, LColor.RED_HIGH);
+  shout(x,y);
 }
 
 public void launchpadGridReleased(int x, int y) {
@@ -65,20 +37,18 @@ public void launchpadGridReleased(int x, int y) {
 }
 
 void keyPressed() {
-  if(!y_set) {
-      y = int(key) - 49;
-      y_set = true;
+ int coord = int(key) - 49;
+  if(first_coord < 0) {
+      first_coord = coord;
+      return;
   }
-  else {
-      x = int(key) - 49;
-      exec();
-  }
+  shout(first_coord, coord);
+  first_coord = -1;
 }
 
+/********************* E X E C U T E **************************/
 
-void exec() {
+void shout(int x, int y) {
     int pos = 8 * y + x;
     MozillaAutomation.executeJavascript(moz, "document.embeds["+pos+"].GotoFrame(1)");
-    //println("Exec: " + x + "  " + y);
-    y_set = false;
 }
