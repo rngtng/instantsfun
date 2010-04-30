@@ -4,8 +4,7 @@
 require 'rubygems'
 require 'net/github-upload' #sudo gem install net-github-upload
 
-DEBUG = false
-UPLOAD = false
+DEBUG = $*.include?('debug')
 
 # setup
 login = `git config github.user`.chomp  # your login for github
@@ -24,32 +23,38 @@ def exec(command)
 end
 
 all_os.each do |os, human_os|
-  file = "instantsfun_launchpad_#{os}.zip"
+  file = "#{repos}_launchpad_#{os}.zip"
 
   # rename
-  next unless exec "mv application.#{os} instantsfun"
+  next unless exec "mv application.#{os} #{repos}"
 
   #remove source
-  exec "rm -rf instantsfun/source"
+  exec "rm -rf #{repos}/source"
   
-  if( os == :macosx )  #patch Mac Os X file to use java 1.6
-      exec "mv instantsfun/instantsfun.app/Contents/Info.plist instantsfun/instantsfun.app/Contents/Info_old.plist"
-      exec "sed 's/1\\\.5/1\\\.6/g' instantsfun/instantsfun.app/Contents/Info_old.plist > instantsfun/instantsfun.app/Contents/Info.plist"
-      # copy icon
-      exec "cp -f sketch.icns instantsfun/instantsfun.app/Contents/Resources/sketch.icns"
-  end 
-  
-  exec "cp -r mozswing_native/#{os}/* instantsfun/instantsfun.app/Contents/Resources/Java"
+  case os
+    when :macosx  #patch Mac Os X file to use java 1.6    
+     exec "mv #{repos}/instantsfun.app/Contents/Info.plist #{repos}/instantsfun.app/Contents/Info_old.plist"
+     exec "sed 's/1\\\.5/1\\\.6/g' #{repos}/instantsfun.app/Contents/Info_old.plist > #{repos}/instantsfun.app/Contents/Info.plist"
+     # copy icon
+     exec "cp -f sketch.icns #{repos}/instantsfun.app/Contents/Resources/sketch.icns"
+     exec "cp -r mozswing_native/#{os}/* #{repos}/instantsfun.app/Contents/Resources/Java"
+   when :linux
+     exec "cp -r mozswing_native/#{os}/* instantsfun/lib"
+   when :windows
+     exec "cp -r mozswing_native/#{os}/* instantsfun/lib"
+  end
     
-  #zip file
-  exec "zip -x .DS_Store -r #{file} instantsfun/"
-      
-  if UPLOAD
+  if $*.include?('upload')
+    #zip file
+    exec "zip -x .DS_Store -r #{file} #{repos}/"
     direct_link =  gh.replace( :repos => repos, :file  => file, :description => "InstantsFun.Es Launchpad Wrapper #{human_os}")
     exec "rm #{file}"
+    exec "rm -rf #{repos}"
+    puts "########################  #{human_os} done, uploaded to: #{direct_link} ########################"  
+  else  
+    exec "mv #{repos} #{repos}_#{os}"
+    puts "########################  #{human_os} done ########################"
   end
-  
-  exec "rm -rf instantsfun"
-  
-  puts "########################  #{human_os} done, uploaded to: #{direct_link} ########################"  
+
+
 end
